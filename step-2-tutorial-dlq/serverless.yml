@@ -1,0 +1,26 @@
+service: aws-sqs-dlq-simulation
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x # FILL_ME_IN
+  region: ap-northeast-2 
+  
+constructs:
+  jobs:
+    type: queue
+    worker:
+      handler: handler.consumer
+
+functions:
+  producer:
+    handler: handler.producer # FILL_ME_IN
+    events:
+      - httpApi:
+          method: post
+          path: /produce
+    environment: 
+      QUEUE_URL: ${construct:jobs.queueUrl} # FILL_ME_IN
+
+plugins:
+  - serverless-lift
